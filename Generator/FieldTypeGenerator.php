@@ -79,18 +79,21 @@ class FieldTypeGenerator extends Generator
         $this->setSkeletonDirs(array($this->kernel->locateResource('@SmileEzFieldTypeGeneratorBundle/Resources/skeleton')));
 
         $this->renderFile('fieldtype/Bundle.php.twig', $dir.'/'.$bundle.'.php', $parameters);
-        $this->renderFile('fieldtype/DependancyInjection/Extension.php.twig', $dir.'/DependencyInjection/'.$basename.'Extension.php', $parameters);
-        $this->renderFile('fieldtype/DependancyInjection/Configuration.php.twig', $dir.'/DependencyInjection/Configuration.php', $parameters);
+        $this->renderFile('fieldtype/DependencyInjection/Extension.php.twig', $dir.'/DependencyInjection/'.$basename.'Extension.php', $parameters);
+        $this->renderFile('fieldtype/DependencyInjection/Configuration.php.twig', $dir.'/DependencyInjection/Configuration.php', $parameters);
         $this->renderFile('fieldtype/FieldType/Field/SearchField.php.twig', $dir.'/FieldType/'.self::identify($fieldTypeName).'/SearchField.php', $parameters);
         $this->renderFile('fieldtype/FieldType/Field/Type.php.twig', $dir.'/FieldType/'.self::identify($fieldTypeName).'/Type.php', $parameters);
         $this->renderFile('fieldtype/FieldType/Field/Value.php.twig', $dir.'/FieldType/'.self::identify($fieldTypeName).'/Value.php', $parameters);
         $this->renderFile('fieldtype/Persistence/Content/FieldValue/Converter/Converter.php.twig', $dir.'/Persistence/Content/FieldValue/Converter/'.self::identify($fieldTypeName).'Converter.php', $parameters);
         $this->renderFile('fieldtype/Search/FieldType/Field.php.twig', $dir.'/Search/FieldType/'.self::identify($fieldTypeName).'Field.php', $parameters);
 
+        $this->renderFile('fieldtype/Resources/config/css.yml.twig', $dir.'/Resources/config/css.yml', $parameters);
+        $this->renderFile('fieldtype/Resources/config/field_templates.yml.twig', $dir.'/Resources/config/field_templates.yml', $parameters);
         $this->renderFile('fieldtype/Resources/config/field_value_converters.yml.twig', $dir.'/Resources/config/field_value_converters.yml', $parameters);
         $this->renderFile('fieldtype/Resources/config/fieldtypes.yml.twig', $dir.'/Resources/config/fieldtypes.yml', $parameters);
         $this->renderFile('fieldtype/Resources/config/indexable_fieldtypes.yml.twig', $dir.'/Resources/config/indexable_fieldtypes.yml', $parameters);
         $this->renderFile('fieldtype/Resources/config/yui.yml.twig', $dir.'/Resources/config/yui.yml', $parameters);
+        $this->renderFile('fieldtype/Resources/public/css/views/fields/edit/field.css.twig', $dir.'/Resources/public/css/views/fields/edit/'.strtolower(self::identify($fieldTypeName)).'.css', $parameters);
         $this->renderFile('fieldtype/Resources/public/js/views/fields/ez-editview.js.twig', $dir.'/Resources/public/js/views/fields/ez-'.strtolower(self::identify($fieldTypeName)).'-editview.js', $parameters);
         $this->renderFile('fieldtype/Resources/public/js/views/fields/ez-view.js.twig', $dir.'/Resources/public/js/views/fields/ez-'.strtolower(self::identify($fieldTypeName)).'-view.js', $parameters);
         $this->renderFile('fieldtype/Resources/public/templates/fields/edit/field.hbt.twig', $dir.'/Resources/public/templates/fields/edit/'.strtolower(self::identify($fieldTypeName)).'.hbt', $parameters);

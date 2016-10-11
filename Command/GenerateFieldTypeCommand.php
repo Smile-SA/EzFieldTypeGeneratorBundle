@@ -28,7 +28,27 @@ class GenerateFieldTypeCommand extends GeneratorCommand
                 new InputOption('bundle-name', '', InputOption::VALUE_REQUIRED, 'The optional bundle name'),
                 new InputOption('fieldtype-name', '', InputOption::VALUE_REQUIRED, 'The field type name')
             ))
-            ->setName('smile:fieldtype:generate')
+            ->setHelp(<<<EOT
+The <info>generate:fieldtype</info> command helps you generates new FieldType bundles.
+
+By default, the command interacts with the developer to tweak the generation.
+Any passed option will be used as a default value for the interaction
+(<comment>--namespace --fieldtype-name</comment> are needed if you follow the
+conventions):
+
+<info>php app/console generate:fieldtype --namespace=Acme/FooBundle --fieldtype-name=Foo</info>
+
+Note that you can use <comment>/</comment> instead of <comment>\\ </comment>for the namespace delimiter to avoid any
+problem.
+
+If you want to disable any user interaction, use <comment>--no-interaction</comment> but don't forget to pass all needed options:
+
+<info>php app/console generate:fieldtype --namespace=Acme/FooBundle --dir=src --fieldtype-name=Foo [--bundle-name=...] --no-interaction</info>
+
+Note that the bundle namespace must end with "Bundle".
+EOT
+            )
+            ->setName('generate:fieldtype')
             ->setDescription('Generate Structure code for new eZ Platform FieldType');
     }
 
@@ -133,6 +153,141 @@ class GenerateFieldTypeCommand extends GeneratorCommand
             );
         }
     }
+
+    protected function interact(InputInterface $input, OutputInterface $output)
+    {
+        $questionHelper = $this->getQuestionHelper();
+        $questionHelper->writeSection($output, 'Welcome to the eZ Platform FieldType bundle generator');
+
+        // namespace
+        $namespace = null;
+        try {
+            // validate the namespace option (if any) but don't require the vendor namespace
+            $namespace = $input->getOption('namespace') ? Validators::validateBundleNamespace($input->getOption('namespace'), false) : null;
+        } catch (\Exception $error) {
+            $output->writeln($questionHelper->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error'));
+        }
+
+        if (null === $namespace) {
+            $acceptedNamespace = false;
+            while (!$acceptedNamespace) {
+                $question = new Question($questionHelper->getQuestion('FieldType Bundle namespace', $input->getOption('namespace')), $input->getOption('namespace'));
+                $question->setValidator(function ($answer) {
+                    return Validators::validateBundleNamespace($answer, false);
+
+                });
+                $namespace = $questionHelper->ask($input, $output, $question);
+
+                // mark as accepted, unless they want to try again below
+                $acceptedNamespace = true;
+
+                // see if there is a vendor namespace. If not, this could be accidental
+                if (false === strpos($namespace, '\\')) {
+                    // language is (almost) duplicated in Validators
+                    $msg = array();
+                    $msg[] = '';
+                    $msg[] = sprintf('The namespace sometimes contain a vendor namespace (e.g. <info>VendorName/BlogBundle</info> instead of simply <info>%s</info>).', $namespace, $namespace);
+                    $msg[] = 'If you\'ve *did* type a vendor namespace, try using a forward slash <info>/</info> (<info>Acme/BlogBundle</info>)?';
+                    $msg[] = '';
+                    $output->writeln($msg);
+
+                    $question = new ConfirmationQuestion($questionHelper->getQuestion(
+                        sprintf('Keep <comment>%s</comment> as the fieldtype bundle namespace (choose no to try again)?', $namespace),
+                        'yes'
+                    ), true);
+                    $acceptedNamespace = $questionHelper->ask($input, $output, $question);
+                }
+            }
+            $input->setOption('namespace', $namespace);
+        }
+
+        // fieldtype-name
+        $fieldTypeName = null;
+        try {
+            // validate the fieldtype-name option (if any)
+            $fieldTypeName = $input->getOption('fieldtype-name') ? FieldTypeValidators::validateFieldTypeName($input->getOption('fieldtype-name'), false) : null;
+        } catch (\Exception $error) {
+            $output->writeln($questionHelper->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error'));
+        }
+
+        if (null === $fieldTypeName) {
+            $acceptedFieldTypeName = false;
+            while (!$acceptedFieldTypeName) {
+                $question = new Question($questionHelper->getQuestion('FieldType name', $input->getOption('fieldtype-name')), $input->getOption('fieldtype-name'));
+                $question->setValidator(function ($answer) {
+                    return FieldTypeValidators::validateFieldTypeName($answer, false);
+
+                });
+                $fieldTypeName = $questionHelper->ask($input, $output, $question);
+
+                // mark as accepted, unless they want to try again below
+                $acceptedFieldTypeName = true;
+            }
+            $input->setOption('fieldtype-name', $fieldTypeName);
+        }
+
+        // bundle name
+        $bundle = null;
+        try {
+            $bundle = $input->getOption('bundle-name') ? Validators::validateBundleName($input->getOption('bundle-name')) : null;
+        } catch (\Exception $error) {
+            $output->writeln($questionHelper->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error'));
+        }
+
+        if (null === $bundle) {
+            $bundle = strtr($namespace, array('\\Bundle\\' => '', '\\' => ''));
+
+            $output->writeln(array(
+                '',
+                'In your code, a bundle is often referenced by its name. It can be the',
+                'concatenation of all namespace parts but it\'s really up to you to come',
+                'up with a unique name (a good practice is to start with the vendor name).',
+                'Based on the namespace, we suggest <comment>'.$bundle.'</comment>.',
+                '',
+            ));
+            $question = new Question($questionHelper->getQuestion('FieldType Bundle name', $bundle), $bundle);
+            $question->setValidator(
+                array('Sensio\Bundle\GeneratorBundle\Command\Validators', 'validateBundleName')
+            );
+            $bundle = $questionHelper->ask($input, $output, $question);
+            $input->setOption('bundle-name', $bundle);
+        }
+
+        // target dir
+        $dir = null;
+        try {
+            $dir = $input->getOption('dir') ? Validators::validateTargetDir($input->getOption('dir'), $bundle, $namespace) : null;
+        } catch (\Exception $error) {
+            $output->writeln($questionHelper->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error'));
+        }
+
+        if (null === $dir) {
+            $dir = dirname($this->getContainer()->getParameter('kernel.root_dir')).'/src';
+
+            $output->writeln(array(
+                '',
+                'The bundle can be generated anywhere. The suggested default directory uses',
+                'the standard conventions.',
+                '',
+            ));
+            $question = new Question($questionHelper->getQuestion('Target directory', $dir), $dir);
+            $question->setValidator(function ($dir) use ($bundle, $namespace) {
+                return Validators::validateTargetDir($dir, $bundle, $namespace);
+            });
+            $dir = $questionHelper->ask($input, $output, $question);
+            $input->setOption('dir', $dir);
+        }
+
+        // summary
+        $output->writeln(array(
+            '',
+            $this->getHelper('formatter')->formatBlock('Summary before generation', 'bg=blue;fg=white', true),
+            '',
+            sprintf("You are going to generate a \"<info>%s\\%s</info>\" FieldType bundle\nin \"<info>%s</info>\".", $namespace, $bundle, $dir),
+            '',
+        ));
+    }
+
 
     /**
      * Initialize FieldType generator

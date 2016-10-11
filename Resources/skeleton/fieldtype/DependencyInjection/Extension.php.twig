@@ -35,7 +35,11 @@ class {{ bundle_basename }}Extension extends Extension implements PrependExtensi
     {
         $container->prependExtensionConfig('assetic', array('bundles' => array('{{ bundle_basename }}Bundle')));
 
+        $config = Yaml::parse(__DIR__ . '/../Resources/config/field_templates.yml');
+        $container->prependExtensionConfig('ezpublish', $config);
+
         $this->prependYui($container);
+        $this->prependCss($container);
     }
 
     private function prependYui(ContainerBuilder $container)
@@ -48,6 +52,18 @@ class {{ bundle_basename }}Extension extends Extension implements PrependExtensi
         $config = Yaml::parse(file_get_contents($yuiConfigFile));
         $container->prependExtensionConfig('ez_platformui', $config);
         $container->addResource(new FileResource($yuiConfigFile));
+    }
+
+    private function prependCss(ContainerBuilder $container)
+    {
+        $container->setParameter(
+            'ez_{{ fieldtype_identifier }}fieldtype.public_dir',
+            'bundles/{{ bundle_basename_lower }}'
+        );
+        $cssConfigFile = __DIR__ . '/../Resources/config/css.yml';
+        $config = Yaml::parse(file_get_contents($cssConfigFile));
+        $container->prependExtensionConfig('ez_platformui', $config);
+        $container->addResource(new FileResource($cssConfigFile));
     }
 {% endblock class_body %}
 }

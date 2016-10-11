@@ -15,8 +15,6 @@ class {{ fieldtype_basename }}Converter implements Converter
 {% endblock class_definition %}
 {
 {% block class_body %}
-    const FLOAT_VALIDATOR_IDENTIFIER = '{{ fieldtype_basename }}ValueValidator';
-
     public static function create()
     {
         return new self();
@@ -24,32 +22,33 @@ class {{ fieldtype_basename }}Converter implements Converter
 
     public function toStorageValue(FieldValue $value, StorageFieldValue $storageFieldValue)
     {
-        $storageFieldValue->dataInt = $value->data;
-        $storageFieldValue->sortKeyInt = (int)$value->sortKey;
+        $storageFieldValue->dataText = $value->data;
+        $storageFieldValue->sortKeyString = $value->sortKey;
     }
 
     public function toFieldValue(StorageFieldValue $value, FieldValue $fieldValue)
     {
-        $fieldValue->data = $value->dataInt;
-        $fieldValue->sortKey = $value->sortKeyInt;
+        $fieldValue->data = $value->dataText;
+        $fieldValue->sortKey = $value->sortKeyString;
     }
 
     public function toStorageFieldDefinition(FieldDefinition $fieldDef, StorageFieldDefinition $storageDef)
     {
-        $storageDef->dataInt3 = $fieldDef->defaultValue->data;
+        $storageDef->dataText1 = $fieldDef->defaultValue->data;
     }
 
     public function toFieldDefinition(StorageFieldDefinition $storageDef, FieldDefinition $fieldDef)
     {
-        $validatorParameters = array();
-        $fieldDef->fieldTypeConstraints->validators[self::FLOAT_VALIDATOR_IDENTIFIER] = $validatorParameters;
-        $fieldDef->defaultValue->data = $storageDef->dataInt3;
-        $fieldDef->defaultValue->sortKey = ($storageDef->dataInt3 === null ? 0 : $storageDef->dataInt3);
+        $validatorConstraints = array();
+
+        $fieldDef->fieldTypeConstraints->validators = $validatorConstraints;
+        $fieldDef->defaultValue->data = $storageDef->dataText1 ?: null;
+        $fieldDef->defaultValue->sortKey = $storageDef->dataText1 ?: '';
     }
 
     public function getIndexColumn()
     {
-        return 'sort_key_int';
+        return 'sort_key_string';
     }
 {% endblock class_body %}
 }

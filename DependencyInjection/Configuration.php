@@ -1,6 +1,6 @@
 <?php
 
-namespace Smile\EzFieldTypeGeneratorBundle\DependancyInjection;
+namespace Smile\EzFieldTypeGeneratorBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;

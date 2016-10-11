@@ -1,6 +1,6 @@
 <?php
 
-namespace {{ namespace }}\FieldType\Test;
+namespace {{ namespace }}\FieldType\{{ fieldtype_basename }};
 
 {% block use_statements %}
 use eZ\Publish\Core\FieldType\Value as BaseValue;
@@ -11,16 +11,21 @@ class Value extends BaseValue
 {% endblock class_definition %}
 {
 {% block class_body %}
-    public $value;
+    /**
+     * Text content.
+     *
+     * @var string
+     */
+    public $text;
 
-    public function __construct($value = null)
+    public function __construct($text = '')
     {
-        $this->value = $value;
+        $this->text = $text;
     }
 
     public function __toString()
     {
-        return (string)$this->value;
+        return (string)$this->text;
     }
 {% endblock class_body %}
 }
