@@ -1,11 +1,51 @@
 # SmileEzFieldTypeGeneratorBundle
 
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/6f66ce27-9b99-411c-a52b-d3fcc715684e/mini.png)](https://insight.sensiolabs.com/projects/6f66ce27-9b99-411c-a52b-d3fcc715684e)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/deca2593-f005-4866-9aec-a2ba30d681b1/mini.png)](https://insight.sensiolabs.com/projects/deca2593-f005-4866-9aec-a2ba30d681b1)
 
-This bundle aims to provide command to generate code structure for new eZ Platform Field Type
+This bundle aims to provide generate:fieldtype command to generate
+eZ Platform FieldType bundle structure.
 
-> This bundle is a pre-release, continue to evolve
-> Your help is welcom to fix, evolve or customize this project
+## Installation
 
-## Documentation
+### Get the bundle using composer
 
+Add SmileEzFieldTypeGeneratorBundle by running this command from the terminal at the root of
+your eZPlatform project:
+
+```bash
+composer require smile/ez-fieldtypegenerator-bundle
+```
+
+
+### Enable the bundle
+
+To start using the bundle, register the bundle in your application's kernel class:
+
+```php
+// ezpublish/EzPublishKernel.php
+public function registerBundles()
+{
+    $bundles = array(
+        // ...
+    );
+    
+    switch ($this->getEnvironment()) {
+        // ...
+        case 'dev':
+            // ...
+            $bundles[] = new Smile\EzFieldTypeGeneratorBundle\SmileEzFieldTypeGeneratorBundle();
+            // ...
+}
+```
+
+
+### How to use the new command
+
+```bash
+php app/console generate:fieldtype
+```
+
+As generate:bundle, you should enter a valid namepsace.
+New required entry is le FieldType name.
+
+A bundle is generated automatically with all code structure to manage new eZ Platform field type
