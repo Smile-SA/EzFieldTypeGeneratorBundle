@@ -27,14 +27,9 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
-    );
-    
-    switch ($this->getEnvironment()) {
+        new Smile\EzFieldTypeGeneratorBundle\SmileEzFieldTypeGeneratorBundle(),
         // ...
-        case 'dev':
-            // ...
-            $bundles[] = new Smile\EzFieldTypeGeneratorBundle\SmileEzFieldTypeGeneratorBundle();
-            // ...
+    );
 }
 ```
 
@@ -43,9 +38,16 @@ public function registerBundles()
 
 ```bash
 php app/console generate:fieldtype
+
+php app/console assets:install --symlink web
+
+php app/console assetic:dump
 ```
 
+
+
 As generate:bundle, you should enter a valid namepsace.
+
 New required entry is le FieldType name.
 
 A bundle is generated automatically with all code structure to manage new eZ Platform field type

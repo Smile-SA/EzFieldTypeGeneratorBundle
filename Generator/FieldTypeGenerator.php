@@ -5,7 +5,6 @@ namespace Smile\EzFieldTypeGeneratorBundle\Generator;
 use Sensio\Bundle\GeneratorBundle\Generator\Generator;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpKernel\Kernel;
 
 class FieldTypeGenerator extends Generator
 {
@@ -15,20 +14,13 @@ class FieldTypeGenerator extends Generator
     private $filesystem;
 
     /**
-     * @var Kernel $kernel
-     */
-    private $kernel;
-
-    /**
      * FieldTypeGenerator constructor.
      *
      * @param Filesystem $filesystem
-     * @param Kernel     $kernel
      */
-    public function __construct(Filesystem $filesystem, Kernel $kernel)
+    public function __construct(Filesystem $filesystem)
     {
         $this->filesystem = $filesystem;
-        $this->kernel = $kernel;
     }
 
     public function generate($namespace, $bundle, $dir, $fieldTypeName)
