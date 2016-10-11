@@ -1,6 +1,6 @@
 # SmileEzFieldTypeGeneratorBundle
 
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/deca2593-f005-4866-9aec-a2ba30d681b1/mini.png)](https://insight.sensiolabs.com/projects/deca2593-f005-4866-9aec-a2ba30d681b1)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/b3954da8-43b5-4394-a233-28113d57676c/mini.png)](https://insight.sensiolabs.com/projects/b3954da8-43b5-4394-a233-28113d57676c)
 
 This bundle aims to provide generate:fieldtype command to generate
 eZ Platform FieldType bundle structure.
