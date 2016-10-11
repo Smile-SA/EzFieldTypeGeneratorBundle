@@ -1,0 +1,16 @@
+<?php
+
+namespace {{ namespace }}\Search\FieldType;
+
+{% block use_statements %}
+use eZ\Publish\SPI\Search\FieldType;
+{% endblock use_statements %}
+
+{% block class_definition %}
+class {{ fieldtype_basename }}Field extends FieldType
+{% endblock class_definition %}
+{
+{% block class_body %}
+    protected $type = 'ez_{{ fieldtype_identifier }}';
+{% endblock class_body %}
+}

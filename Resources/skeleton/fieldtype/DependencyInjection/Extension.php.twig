@@ -1,0 +1,53 @@
+<?php
+
+namespace {{ namespace }}\DependencyInjection;
+
+{% block use_statements %}
+use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\Yaml\Yaml;
+{% endblock use_statements %}
+
+{% block class_definition %}
+class {{ bundle_basename }}Extension extends Extension implements PrependExtensionInterface
+{% endblock class_definition %}
+{
+{% block class_body %}
+    /**
+     * {@inheritdoc}
+     */
+    public function load(array $configs, ContainerBuilder $container)
+    {
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration, $configs);
+
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('fieldtypes.yml');
+        $loader->load('indexable_fieldtypes.yml');
+        $loader->load('field_value_converters.yml');
+    }
+
+    public function prepend(ContainerBuilder $container)
+    {
+        $container->prependExtensionConfig('assetic', array('bundles' => array('{{ bundle_basename }}Bundle')));
+
+        $this->prependYui($container);
+    }
+
+    private function prependYui(ContainerBuilder $container)
+    {
+        $container->setParameter(
+            'ez_{{ fieldtype_identifier }}fieldtype.public_dir',
+            'bundles/{{ bundle_basename_lower }}'
+        );
+        $yuiConfigFile = __DIR__ . '/../Resources/config/yui.yml';
+        $config = Yaml::parse(file_get_contents($yuiConfigFile));
+        $container->prependExtensionConfig('ez_platformui', $config);
+        $container->addResource(new FileResource($yuiConfigFile));
+    }
+{% endblock class_body %}
+}

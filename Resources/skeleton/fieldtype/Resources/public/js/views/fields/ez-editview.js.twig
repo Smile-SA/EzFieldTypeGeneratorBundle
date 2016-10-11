@@ -1,0 +1,63 @@
+YUI.add('ez-{{ fieldtype_identifier }}-editview', function (Y) {{ "{" }}
+    "use strict";
+    Y.namespace('eZ');
+
+    var L = Y.Lang,
+        FIELDTYPE_IDENTIFIER = 'ez{{ fieldtype_identifier }}',
+        {{ fieldtype_identifier }}_PATTERN = "-?\\d*"; // WARNING: each backslash is doubled, because it is escaped on output otherwise;
+
+    Y.eZ.{{ fieldtype_basename }}EditView = Y.Base.create('{{ fieldtype_identifier }}EditView', Y.eZ.FieldEditView, [], {{ "{" }}
+        events: {{ "{" }}
+            '.ez-{{ fieldtype_identifier }}-input-ui input': {{ "{" }}
+                'blur': 'validate',
+                'valuechange': 'validate'
+            {{ "}" }}
+        {{ "}" }},
+
+        validate: function () {{ "{" }}
+            var validity = this._getInputValidity(),
+                config = this._variables(),
+                inputValue = this.get('container').one('.ez-{{ fieldtype_identifier }}-input-ui input').get('value');
+
+            if ( validity.valueMissing ) {{ "{" }}
+                this.set('errorStatus', 'This field is required');
+            {{ "}" }} else if ( validity.patternMismatch ) {{ "{" }}
+                this.set(
+                    'errorStatus',
+                    'The value should be a valid {{ fieldtype_identifier }} number'
+                );
+                // Range validation
+            {{ "}" }} else {{ "{" }}
+                this.set('errorStatus', false);
+            {{ "}" }}
+        {{ "}" }},
+
+        _variables: function () {{ "{" }}
+            var def = this.get('fieldDefinition');
+
+            return {{ "{" }}
+                "isRequired": def.isRequired,
+                "{{ fieldtype_identifier }}Pattern": {{ fieldtype_identifier }}_PATTERN
+            {{ "}" }};
+        {{ "}" }},
+
+        _getInputValidity: function () {{ "{" }}
+            return this.get('container').one('.ez-{{ fieldtype_identifier }}-input-ui input').get('validity');
+        {{ "}" }},
+
+        /**
+         * Returns the currently filled value
+         *
+         * @protected
+         * @method _getFieldValue
+         * @return Number
+         */
+        _getFieldValue: function () {{ "{" }}
+            return parseInt(this.get('container').one('.ez-{{ fieldtype_identifier }}-input-ui input').get('value'), 10);
+        {{ "}" }},
+    {{ "}" }});
+
+    Y.eZ.FieldEditView.registerFieldEditView(
+        FIELDTYPE_IDENTIFIER, Y.eZ.{{ fieldtype_basename }}EditView
+    );
+{{ "}" }});

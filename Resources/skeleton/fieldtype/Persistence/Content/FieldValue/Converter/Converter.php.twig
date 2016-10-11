@@ -1,0 +1,55 @@
+<?php
+
+namespace {{ namespace }}\Persistence\Content\FieldValue\Converter;
+
+{% block use_statements %}
+use eZ\Publish\Core\Persistence\Legacy\Content\FieldValue\Converter;
+use eZ\Publish\Core\Persistence\Legacy\Content\StorageFieldValue;
+use eZ\Publish\SPI\Persistence\Content\FieldValue;
+use eZ\Publish\SPI\Persistence\Content\Type\FieldDefinition;
+use eZ\Publish\Core\Persistence\Legacy\Content\StorageFieldDefinition;
+{% endblock use_statements %}
+
+{% block class_definition %}
+class {{ fieldtype_basename }}Converter implements Converter
+{% endblock class_definition %}
+{
+{% block class_body %}
+    const FLOAT_VALIDATOR_IDENTIFIER = '{{ fieldtype_basename }}ValueValidator';
+
+    public static function create()
+    {
+        return new self();
+    }
+
+    public function toStorageValue(FieldValue $value, StorageFieldValue $storageFieldValue)
+    {
+        $storageFieldValue->dataInt = $value->data;
+        $storageFieldValue->sortKeyInt = (int)$value->sortKey;
+    }
+
+    public function toFieldValue(StorageFieldValue $value, FieldValue $fieldValue)
+    {
+        $fieldValue->data = $value->dataInt;
+        $fieldValue->sortKey = $value->sortKeyInt;
+    }
+
+    public function toStorageFieldDefinition(FieldDefinition $fieldDef, StorageFieldDefinition $storageDef)
+    {
+        $storageDef->dataInt3 = $fieldDef->defaultValue->data;
+    }
+
+    public function toFieldDefinition(StorageFieldDefinition $storageDef, FieldDefinition $fieldDef)
+    {
+        $validatorParameters = array();
+        $fieldDef->fieldTypeConstraints->validators[self::FLOAT_VALIDATOR_IDENTIFIER] = $validatorParameters;
+        $fieldDef->defaultValue->data = $storageDef->dataInt3;
+        $fieldDef->defaultValue->sortKey = ($storageDef->dataInt3 === null ? 0 : $storageDef->dataInt3);
+    }
+
+    public function getIndexColumn()
+    {
+        return 'sort_key_int';
+    }
+{% endblock class_body %}
+}

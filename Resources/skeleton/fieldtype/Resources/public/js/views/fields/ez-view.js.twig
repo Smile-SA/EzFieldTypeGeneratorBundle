@@ -1,0 +1,24 @@
+YUI.add('ez-{{ fieldtype_identifier }}-view', function (Y) {{ "{" }}
+    "use strict";
+
+    Y.namespace('eZ');
+
+    Y.eZ.{{ fieldtype_basename }}View = Y.Base.create('{{ fieldtype_identifier }}View', Y.eZ.FieldView, [], {{ "{" }}
+        _isFieldEmpty: function () {{ "{" }}
+            return (this.get('field').fieldValue === null);
+        {{ "}" }},
+
+        /**
+         * Overrides the name to use the generic field view template
+         *
+         * @method _getName
+         * @protected
+         * @return String
+         */
+        _getName: function () {{ "{" }}
+            return Y.eZ.FieldView.NAME;
+        {{ "}" }},
+    {{ "}" }});
+
+    Y.eZ.FieldView.registerFieldView('ez{{ fieldtype_identifier }}', Y.eZ.{{ fieldtype_basename }}View);
+{{ "}" }});

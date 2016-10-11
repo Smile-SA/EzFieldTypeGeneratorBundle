@@ -1,0 +1,26 @@
+<?php
+
+namespace {{ namespace }}\FieldType\Test;
+
+{% block use_statements %}
+use eZ\Publish\Core\FieldType\Value as BaseValue;
+{% endblock use_statements %}
+
+{% block class_definition %}
+class Value extends BaseValue
+{% endblock class_definition %}
+{
+{% block class_body %}
+    public $value;
+
+    public function __construct($value = null)
+    {
+        $this->value = $value;
+    }
+
+    public function __toString()
+    {
+        return (string)$this->value;
+    }
+{% endblock class_body %}
+}

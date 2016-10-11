@@ -1,0 +1,10 @@
+{{ "{% extends 'EzPublishCoreBundle::content_fields.html.twig' %}" }}
+
+{{ "{% block ez" }}{{ fieldtype_identifier }}_field %}" }}
+    {{ "{% spaceless %}" }}
+        {{ "{% if not ez_is_field_empty(content, field) %}" }}
+            {{ "{% set field_value = field.value.value %}" }}
+            {{ "{{ block( 'simple_inline_field' ) }}" }}
+        {{ "{% endif %}" }}
+    {{ "{% endspaceless %}" }}
+{{ "{% endblock %}" }}

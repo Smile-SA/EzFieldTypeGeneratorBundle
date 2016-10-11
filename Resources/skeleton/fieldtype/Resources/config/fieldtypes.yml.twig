@@ -1,0 +1,9 @@
+parameters:
+    ezpublish.fieldType.ez{{ fieldtype_identifier }}.class: {{ namespace }}\FieldType\{{ fieldtype_basename }}\Type
+
+services:
+    ezpublish.fieldType.ez{{ fieldtype_identifier }}:
+        class: "%ezpublish.fieldType.ez{{ fieldtype_identifier }}.class%"
+        parent: ezpublish.fieldType
+        tags:
+            - {name: ezpublish.fieldType, alias: ez{{ fieldtype_identifier }}}
