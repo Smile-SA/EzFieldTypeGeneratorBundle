@@ -297,7 +297,6 @@ EOT
     protected function createGenerator()
     {
         return new FieldTypeGenerator(
-            $this->getContainer()->get('filesystem'),
             $this->getContainer()->get('kernel')
         );
     }

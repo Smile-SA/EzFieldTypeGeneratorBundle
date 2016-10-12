@@ -4,10 +4,25 @@ namespace Smile\EzFieldTypeGeneratorBundle\Generator;
 
 use Sensio\Bundle\GeneratorBundle\Generator\Generator;
 use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpKernel\Kernel;
 
 class FieldTypeGenerator extends Generator
 {
+    /**
+     * @var Kernel $kernel
+     */
+    private $kernel;
+
+    /**
+     * FieldTypeGenerator constructor.
+     *
+     * @param Kernel     $kernel
+     */
+    public function __construct(Kernel $kernel)
+    {
+        $this->kernel = $kernel;
+    }
+
     public function generate($namespace, $bundle, $dir, $fieldTypeName)
     {
         $dir .= '/'.strtr($namespace, '\\', '/');
