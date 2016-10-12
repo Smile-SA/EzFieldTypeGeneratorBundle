@@ -51,3 +51,4 @@ As generate:bundle, you should enter a valid namepsace.
 New required entry is le FieldType name.
 
 A bundle is generated automatically with all code structure to manage new eZ Platform field type
+

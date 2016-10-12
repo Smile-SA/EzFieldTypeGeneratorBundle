@@ -8,21 +8,6 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class FieldTypeGenerator extends Generator
 {
-    /**
-     * @var Filesystem $filesystem
-     */
-    private $filesystem;
-
-    /**
-     * FieldTypeGenerator constructor.
-     *
-     * @param Filesystem $filesystem
-     */
-    public function __construct(Filesystem $filesystem)
-    {
-        $this->filesystem = $filesystem;
-    }
-
     public function generate($namespace, $bundle, $dir, $fieldTypeName)
     {
         $dir .= '/'.strtr($namespace, '\\', '/');
