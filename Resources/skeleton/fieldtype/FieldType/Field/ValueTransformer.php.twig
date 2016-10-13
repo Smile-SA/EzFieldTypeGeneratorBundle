@@ -1,0 +1,32 @@
+<?php
+
+namespace {{ namespace }}\FieldType\{{ fieldtype_basename }};
+
+{% block use_statements %}
+use Symfony\Component\Form\DataTransformerInterface;
+{% endblock use_statements %}
+
+{% block class_definition %}
+class ValueTransformer implements DataTransformerInterface
+{% endblock class_definition %}
+{
+{% block class_body %}
+    public function transform($value)
+    {
+        if (!$value instanceof Value) {
+            return null;
+        }
+
+        return $value->text;
+    }
+
+    public function reverseTransform($value)
+    {
+        if (!$value) {
+            return null;
+        }
+
+        return new Value($value);
+    }
+{% endblock class_body %}
+}

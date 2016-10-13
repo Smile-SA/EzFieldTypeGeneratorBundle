@@ -1,5 +1,6 @@
 parameters:
     ezpublish.fieldType.ez{{ fieldtype_identifier }}.class: {{ namespace }}\FieldType\{{ fieldtype_basename }}\Type
+    ezrepoforms.field_type.form_mapper.ez{{ fieldtype_identifier }}.class: {{ namespace }}\FieldType\{{ fieldtype_basename }}\FormMapper
 
 services:
     ezpublish.fieldType.ez{{ fieldtype_identifier }}:
@@ -7,3 +8,12 @@ services:
         parent: ezpublish.fieldType
         tags:
             - {name: ezpublish.fieldType, alias: ez{{ fieldtype_identifier }}}
+
+    ezrepoforms.field_type.form_mapper.ez{{ fieldtype_identifier }}:
+        class: "%ezrepoforms.field_type.form_mapper.ez{{ fieldtype_identifier }}.class%"
+        tags:
+            - { name: ez.fieldFormMapper.definition, fieldType: ez{{ fieldtype_identifier }} }
+            - { name: ez.fieldFormMapper.value, fieldType: ez{{ fieldtype_identifier }} }
+        arguments:
+            - "@ezpublish.api.service.field_type"
+

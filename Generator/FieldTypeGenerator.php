@@ -76,6 +76,8 @@ class FieldTypeGenerator extends Generator
         $this->renderFile('fieldtype/FieldType/Field/SearchField.php.twig', $dir.'/FieldType/'.self::identify($fieldTypeName).'/SearchField.php', $parameters);
         $this->renderFile('fieldtype/FieldType/Field/Type.php.twig', $dir.'/FieldType/'.self::identify($fieldTypeName).'/Type.php', $parameters);
         $this->renderFile('fieldtype/FieldType/Field/Value.php.twig', $dir.'/FieldType/'.self::identify($fieldTypeName).'/Value.php', $parameters);
+        $this->renderFile('fieldtype/FieldType/Field/FormMapper.php.twig', $dir.'/FieldType/'.self::identify($fieldTypeName).'/FormMapper.php', $parameters);
+        $this->renderFile('fieldtype/FieldType/Field/ValueTransformer.php.twig', $dir.'/FieldType/'.self::identify($fieldTypeName).'/ValueTransformer.php', $parameters);
         $this->renderFile('fieldtype/Persistence/Content/FieldValue/Converter/Converter.php.twig', $dir.'/Persistence/Content/FieldValue/Converter/'.self::identify($fieldTypeName).'Converter.php', $parameters);
         $this->renderFile('fieldtype/Search/FieldType/Field.php.twig', $dir.'/Search/FieldType/'.self::identify($fieldTypeName).'Field.php', $parameters);
 
@@ -90,8 +92,10 @@ class FieldTypeGenerator extends Generator
         $this->renderFile('fieldtype/Resources/public/js/views/fields/ez-view.js.twig', $dir.'/Resources/public/js/views/fields/ez-'.strtolower(self::identify($fieldTypeName)).'-view.js', $parameters);
         $this->renderFile('fieldtype/Resources/public/templates/fields/edit/field.hbt.twig', $dir.'/Resources/public/templates/fields/edit/'.strtolower(self::identify($fieldTypeName)).'.hbt', $parameters);
         $this->renderFile('fieldtype/Resources/public/templates/fields/view/field.hbt.twig', $dir.'/Resources/public/templates/fields/view/'.strtolower(self::identify($fieldTypeName)).'.hbt', $parameters);
+        $this->renderFile('fieldtype/Resources/translations/ezrepoforms_content_type.en.yml.twig', $dir.'/Resources/translations/ezrepoforms_content_type.en.yml', $parameters);
         $this->renderFile('fieldtype/Resources/translations/fieldtypes.en.yml.twig', $dir.'/Resources/translations/fieldtypes.en.yml', $parameters);
         $this->renderFile('fieldtype/Resources/views/content_fields.html.twig.twig', $dir.'/Resources/views/content_fields.html.twig', $parameters);
+        $this->renderFile('fieldtype/Resources/views/field_types.html.twig.twig', $dir.'/Resources/views/field_types.html.twig', $parameters);
         $this->renderFile('fieldtype/Resources/views/fielddefinition_settings.html.twig.twig', $dir.'/Resources/views/fielddefinition_settings.html.twig', $parameters);
     }
 
