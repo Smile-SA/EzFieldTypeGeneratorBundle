@@ -41,9 +41,11 @@ conventions):
 Note that you can use <comment>/</comment> instead of <comment>\\ </comment>for the namespace delimiter to avoid any
 problem.
 
-If you want to disable any user interaction, use <comment>--no-interaction</comment> but don't forget to pass all needed options:
+If you want to disable any user interaction, use <comment>--no-interaction</comment> but don't forget to pass 
+all needed options:
 
-<info>php app/console generate:fieldtype --namespace=Acme/FooBundle --dir=src --fieldtype-name=Foo [--bundle-name=...] --no-interaction</info>
+<info>php app/console generate:fieldtype --namespace=Acme/FooBundle --dir=src --fieldtype-name=Foo 
+[--bundle-name=...] --no-interaction</info>
 
 Note that the bundle namespace must end with "Bundle".
 EOT
@@ -105,7 +107,16 @@ EOT
         $runner($this->checkAutoloader($output, $namespace, $bundle, $dir));
 
         // register the bundle in the Kernel class
-        $runner($this->updateKernel($questionHelper, $input, $output, $this->getContainer()->get('kernel'), $namespace, $bundle));
+        $runner(
+            $this->updateKernel(
+                $questionHelper,
+                $input,
+                $output,
+                $this->getContainer()->get('kernel'),
+                $namespace,
+                $bundle
+            )
+        );
 
         $questionHelper->writeGeneratorSummary($output, $errors);
     }
@@ -122,11 +133,23 @@ EOT
         }
     }
 
-    protected function updateKernel(QuestionHelper $questionHelper, InputInterface $input, OutputInterface $output, KernelInterface $kernel, $namespace, $bundle)
-    {
+    protected function updateKernel(
+        QuestionHelper $questionHelper,
+        InputInterface $input,
+        OutputInterface $output,
+        KernelInterface $kernel,
+        $namespace, $bundle
+    ) {
         $auto = true;
         if ($input->isInteractive()) {
-            $question = new ConfirmationQuestion($questionHelper->getQuestion('Confirm automatic update of your Kernel', 'yes', '?'), true);
+            $question = new ConfirmationQuestion(
+                $questionHelper->getQuestion(
+                    'Confirm automatic update of your Kernel',
+                    'yes',
+                    '?'
+                ),
+                true
+            );
             $auto = $questionHelper->ask($input, $output, $question);
         }
 
@@ -148,7 +171,10 @@ EOT
             }
         } catch (\RuntimeException $e) {
             return array(
-                sprintf('Bundle <comment>%s</comment> is already defined in <comment>AppKernel::registerBundles()</comment>.', $namespace.'\\'.$bundle),
+                sprintf(
+                    'Bundle <comment>%s</comment> is already defined in <comment>AppKernel::registerBundles()</comment>.',
+                    $namespace.'\\'.$bundle
+                ),
                 '',
             );
         }
@@ -159,19 +185,46 @@ EOT
         $questionHelper = $this->getQuestionHelper();
         $questionHelper->writeSection($output, 'Welcome to the eZ Platform FieldType bundle generator');
 
+        $namespace = $this->getNamespace($input, $output, $questionHelper);
+        $fieldTypeName = $this->getFieldTypeName($input, $output, $questionHelper);
+        $bundle = $this->getBundle($input, $output, $questionHelper, $namespace);
+        $dir = $this->getDir($input, $output, $questionHelper, $bundle, $namespace);
+
+        // summary
+        $output->writeln(array(
+            '',
+            $this->getHelper('formatter')->formatBlock('Summary before generation', 'bg=blue;fg=white', true),
+            '',
+            sprintf("You are going to generate a \"<info>%s\\%s</info>\" FieldType bundle\nin \"<info>%s</info> with fieldtype name <info>%s</info>\".", $namespace, $bundle, $dir, $fieldTypeName),
+            '',
+        ));
+    }
+
+    private function getNamespace(InputInterface $input, OutputInterface $output, QuestionHelper $questionHelper)
+    {
         // namespace
         $namespace = null;
         try {
             // validate the namespace option (if any) but don't require the vendor namespace
-            $namespace = $input->getOption('namespace') ? Validators::validateBundleNamespace($input->getOption('namespace'), false) : null;
+            $namespace = $input->getOption('namespace')
+                ? Validators::validateBundleNamespace($input->getOption('namespace'), false)
+                : null;
         } catch (\Exception $error) {
-            $output->writeln($questionHelper->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error'));
+            $output->writeln(
+                $questionHelper->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error')
+            );
         }
 
         if (null === $namespace) {
             $acceptedNamespace = false;
             while (!$acceptedNamespace) {
-                $question = new Question($questionHelper->getQuestion('FieldType Bundle namespace', $input->getOption('namespace')), $input->getOption('namespace'));
+                $question = new Question(
+                    $questionHelper->getQuestion(
+                        'FieldType Bundle namespace',
+                        $input->getOption('namespace')
+                    ),
+                    $input->getOption('namespace')
+                );
                 $question->setValidator(function ($answer) {
                     return Validators::validateBundleNamespace($answer, false);
 
@@ -186,13 +239,20 @@ EOT
                     // language is (almost) duplicated in Validators
                     $msg = array();
                     $msg[] = '';
-                    $msg[] = sprintf('The namespace sometimes contain a vendor namespace (e.g. <info>VendorName/BlogBundle</info> instead of simply <info>%s</info>).', $namespace, $namespace);
+                    $msg[] = sprintf(
+                        'The namespace sometimes contain a vendor namespace (e.g. <info>VendorName/BlogBundle</info> instead of simply <info>%s</info>).',
+                        $namespace,
+                        $namespace
+                    );
                     $msg[] = 'If you\'ve *did* type a vendor namespace, try using a forward slash <info>/</info> (<info>Acme/BlogBundle</info>)?';
                     $msg[] = '';
                     $output->writeln($msg);
 
                     $question = new ConfirmationQuestion($questionHelper->getQuestion(
-                        sprintf('Keep <comment>%s</comment> as the fieldtype bundle namespace (choose no to try again)?', $namespace),
+                        sprintf(
+                            'Keep <comment>%s</comment> as the fieldtype bundle namespace (choose no to try again)?',
+                            $namespace
+                        ),
                         'yes'
                     ), true);
                     $acceptedNamespace = $questionHelper->ask($input, $output, $question);
@@ -201,19 +261,34 @@ EOT
             $input->setOption('namespace', $namespace);
         }
 
+        return $namespace;
+    }
+
+    private function getFieldTypeName(InputInterface $input, OutputInterface $output, QuestionHelper $questionHelper)
+    {
         // fieldtype-name
         $fieldTypeName = null;
         try {
             // validate the fieldtype-name option (if any)
-            $fieldTypeName = $input->getOption('fieldtype-name') ? FieldTypeValidators::validateFieldTypeName($input->getOption('fieldtype-name'), false) : null;
+            $fieldTypeName = $input->getOption('fieldtype-name')
+                ? FieldTypeValidators::validateFieldTypeName($input->getOption('fieldtype-name'))
+                : null;
         } catch (\Exception $error) {
-            $output->writeln($questionHelper->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error'));
+            $output->writeln(
+                $questionHelper->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error')
+            );
         }
 
         if (null === $fieldTypeName) {
             $acceptedFieldTypeName = false;
             while (!$acceptedFieldTypeName) {
-                $question = new Question($questionHelper->getQuestion('FieldType name', $input->getOption('fieldtype-name')), $input->getOption('fieldtype-name'));
+                $question = new Question(
+                    $questionHelper->getQuestion(
+                        'FieldType name',
+                        $input->getOption('fieldtype-name')
+                    ),
+                    $input->getOption('fieldtype-name')
+                );
                 $question->setValidator(function ($answer) {
                     return FieldTypeValidators::validateFieldTypeName($answer, false);
 
@@ -226,12 +301,25 @@ EOT
             $input->setOption('fieldtype-name', $fieldTypeName);
         }
 
+        return $fieldTypeName;
+    }
+
+    private function getBundle(
+        InputInterface $input,
+        OutputInterface $output,
+        QuestionHelper $questionHelper,
+        $namespace
+    ) {
         // bundle name
         $bundle = null;
         try {
-            $bundle = $input->getOption('bundle-name') ? Validators::validateBundleName($input->getOption('bundle-name')) : null;
+            $bundle = $input->getOption('bundle-name')
+                ? Validators::validateBundleName($input->getOption('bundle-name'))
+                : null;
         } catch (\Exception $error) {
-            $output->writeln($questionHelper->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error'));
+            $output->writeln(
+                $questionHelper->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error')
+            );
         }
 
         if (null === $bundle) {
@@ -253,10 +341,22 @@ EOT
             $input->setOption('bundle-name', $bundle);
         }
 
+        return $bundle;
+    }
+
+    private function getDir(
+        InputInterface $input,
+        OutputInterface $output,
+        QuestionHelper $questionHelper,
+        $bundle,
+        $namespace
+    ) {
         // target dir
         $dir = null;
         try {
-            $dir = $input->getOption('dir') ? Validators::validateTargetDir($input->getOption('dir'), $bundle, $namespace) : null;
+            $dir = $input->getOption('dir')
+                ? Validators::validateTargetDir($input->getOption('dir'), $bundle, $namespace)
+                : null;
         } catch (\Exception $error) {
             $output->writeln($questionHelper->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error'));
         }
@@ -277,17 +377,7 @@ EOT
             $dir = $questionHelper->ask($input, $output, $question);
             $input->setOption('dir', $dir);
         }
-
-        // summary
-        $output->writeln(array(
-            '',
-            $this->getHelper('formatter')->formatBlock('Summary before generation', 'bg=blue;fg=white', true),
-            '',
-            sprintf("You are going to generate a \"<info>%s\\%s</info>\" FieldType bundle\nin \"<info>%s</info>\".", $namespace, $bundle, $dir),
-            '',
-        ));
     }
-
 
     /**
      * Initialize FieldType generator
