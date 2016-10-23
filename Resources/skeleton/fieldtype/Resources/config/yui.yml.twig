@@ -4,22 +4,22 @@ system:
             modules:
                 ez-rawcontentview:
                     requires:
-                        - 'ez-{{ fieldtype_identifier }}-view'
+                        - '{{ yui_fieldtype_namespace_identifier }}-{{ fieldtype_identifier }}-view'
                 ez-contenteditformview:
                     requires:
-                        - 'ez-{{ fieldtype_identifier }}-editview'
-                ez-{{ fieldtype_identifier }}-view:
+                        - '{{ yui_fieldtype_namespace_identifier }}-{{ fieldtype_identifier }}-editview'
+                {{ yui_fieldtype_namespace_identifier }}-{{ fieldtype_identifier }}-view:
                     requires: ['ez-fieldview', '{{ fieldtype_identifier }}view-ez-template']
-                    path: "%ez_{{ fieldtype_identifier }}fieldtype.public_dir%/js/views/fields/ez-{{ fieldtype_identifier }}-view.js"
-                ez-{{ fieldtype_identifier }}-editview:
+                    path: "%{{ yui_fieldtype_namespace_identifier }}_{{ fieldtype_identifier }}fieldtype.public_dir%/js/views/fields/{{ yui_fieldtype_namespace_identifier }}-{{ fieldtype_identifier }}-view.js"
+                {{ yui_fieldtype_namespace_identifier }}-{{ fieldtype_identifier }}-editview:
                     requires: ['ez-fieldeditview', 'event-valuechange', '{{ fieldtype_identifier }}editview-ez-template']
-                    path: "%ez_{{ fieldtype_identifier }}fieldtype.public_dir%/js/views/fields/ez-{{ fieldtype_identifier }}-editview.js"
+                    path: "%{{ yui_fieldtype_namespace_identifier }}_{{ fieldtype_identifier }}fieldtype.public_dir%/js/views/fields/{{ yui_fieldtype_namespace_identifier }}-{{ fieldtype_identifier }}-editview.js"
                 {{ fieldtype_identifier }}view-ez-template:
                     type: 'template'
-                    path: "%ez_{{ fieldtype_identifier }}fieldtype.public_dir%/templates/fields/view/{{ fieldtype_identifier }}.hbt"
+                    path: "%{{ yui_fieldtype_namespace_identifier }}_{{ fieldtype_identifier }}fieldtype.public_dir%/templates/fields/view/{{ fieldtype_identifier }}.hbt"
                 {{ fieldtype_identifier }}editview-ez-template:
                     type: 'template'
-                    path: "%ez_{{ fieldtype_identifier }}fieldtype.public_dir%/templates/fields/edit/{{ fieldtype_identifier }}.hbt"
+                    path: "%{{ yui_fieldtype_namespace_identifier }}_{{ fieldtype_identifier }}fieldtype.public_dir%/templates/fields/edit/{{ fieldtype_identifier }}.hbt"
 
 
 

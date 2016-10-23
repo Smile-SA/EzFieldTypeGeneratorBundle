@@ -1,7 +1,7 @@
 {{ "{% extends 'EzSystemsRepositoryFormsBundle:ContentType:field_types.html.twig' %}" }}
 
-{{ '{% block ez' }}{{ fieldtype_identifier }}{{ '_field_definition_edit %}' }}
-    <div class="ez{{ fieldtype_identifier }}-default-value{{ '{% if group_class is not empty %} {{ group_class }}{% endif %}' }}">
+{{ '{% block ' }}{{ yui_fieldtype_namespace_identifier }}{{ fieldtype_identifier }}{{ '_field_definition_edit %}' }}
+    <div class="{{ yui_fieldtype_namespace_identifier }}{{ fieldtype_identifier }}-default-value{{ '{% if group_class is not empty %} {{ group_class }}{% endif %}' }}">
         {{ '{{- form_label(form.defaultValue) -}}' }}
         {{ '{{- form_errors(form.defaultValue) -}}' }}
         {{ '{{- form_widget(form.defaultValue) -}}' }}

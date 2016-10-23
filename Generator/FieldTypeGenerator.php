@@ -23,7 +23,7 @@ class FieldTypeGenerator extends Generator
         $this->kernel = $kernel;
     }
 
-    public function generate($namespace, $bundle, $dir, $fieldTypeName)
+    public function generate($namespace, $bundle, $dir, $fieldTypeName, $yuiFieldTypeNamespace)
     {
         $dir .= '/'.strtr($namespace, '\\', '/');
         if (file_exists($dir)) {
@@ -65,7 +65,9 @@ class FieldTypeGenerator extends Generator
             'extension_alias' => Container::underscore($basename),
             'fieldtype_name' => $fieldTypeName,
             'fieldtype_basename' => self::identify($fieldTypeName),
-            'fieldtype_identifier' => strtolower(self::identify($fieldTypeName))
+            'fieldtype_identifier' => strtolower(self::identify($fieldTypeName)),
+            'yui_fieldtype_namespace' => $yuiFieldTypeNamespace,
+            'yui_fieldtype_namespace_identifier' => strtolower(self::identify($yuiFieldTypeNamespace))
         );
 
         $this->setSkeletonDirs(array($this->kernel->locateResource('@SmileEzFieldTypeGeneratorBundle/Resources/skeleton')));
@@ -88,8 +90,8 @@ class FieldTypeGenerator extends Generator
         $this->renderFile('fieldtype/Resources/config/indexable_fieldtypes.yml.twig', $dir.'/Resources/config/indexable_fieldtypes.yml', $parameters);
         $this->renderFile('fieldtype/Resources/config/yui.yml.twig', $dir.'/Resources/config/yui.yml', $parameters);
         $this->renderFile('fieldtype/Resources/public/css/views/fields/edit/field.css.twig', $dir.'/Resources/public/css/views/fields/edit/'.strtolower(self::identify($fieldTypeName)).'.css', $parameters);
-        $this->renderFile('fieldtype/Resources/public/js/views/fields/ez-editview.js.twig', $dir.'/Resources/public/js/views/fields/ez-'.strtolower(self::identify($fieldTypeName)).'-editview.js', $parameters);
-        $this->renderFile('fieldtype/Resources/public/js/views/fields/ez-view.js.twig', $dir.'/Resources/public/js/views/fields/ez-'.strtolower(self::identify($fieldTypeName)).'-view.js', $parameters);
+        $this->renderFile('fieldtype/Resources/public/js/views/fields/editview.js.twig', $dir.'/Resources/public/js/views/fields/'.strtolower(self::identify($yuiFieldTypeNamespace)).'-'.strtolower(self::identify($fieldTypeName)).'-editview.js', $parameters);
+        $this->renderFile('fieldtype/Resources/public/js/views/fields/view.js.twig', $dir.'/Resources/public/js/views/fields/'.strtolower(self::identify($yuiFieldTypeNamespace)).'-'.strtolower(self::identify($fieldTypeName)).'-view.js', $parameters);
         $this->renderFile('fieldtype/Resources/public/templates/fields/edit/field.hbt.twig', $dir.'/Resources/public/templates/fields/edit/'.strtolower(self::identify($fieldTypeName)).'.hbt', $parameters);
         $this->renderFile('fieldtype/Resources/public/templates/fields/view/field.hbt.twig', $dir.'/Resources/public/templates/fields/view/'.strtolower(self::identify($fieldTypeName)).'.hbt', $parameters);
         $this->renderFile('fieldtype/Resources/translations/ezrepoforms_content_type.en.yml.twig', $dir.'/Resources/translations/ezrepoforms_content_type.en.yml', $parameters);

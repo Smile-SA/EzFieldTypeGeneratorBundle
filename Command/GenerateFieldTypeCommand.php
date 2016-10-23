@@ -26,17 +26,18 @@ class GenerateFieldTypeCommand extends GeneratorCommand
                 new InputOption('namespace', '', InputOption::VALUE_REQUIRED, 'The namespace of the bundle to create'),
                 new InputOption('dir', '', InputOption::VALUE_REQUIRED, 'The directory where to create the bundle'),
                 new InputOption('bundle-name', '', InputOption::VALUE_REQUIRED, 'The optional bundle name'),
-                new InputOption('fieldtype-name', '', InputOption::VALUE_REQUIRED, 'The field type name')
+                new InputOption('fieldtype-name', '', InputOption::VALUE_REQUIRED, 'The field type name'),
+                new InputOption('yui-fieldtype-namespace', '', InputOption::VALUE_REQUIRED, 'The field type namespace')
             ))
             ->setHelp(<<<EOT
 The <info>generate:fieldtype</info> command helps you generates new FieldType bundles.
 
 By default, the command interacts with the developer to tweak the generation.
 Any passed option will be used as a default value for the interaction
-(<comment>--namespace --fieldtype-name</comment> are needed if you follow the
+(<comment>--namespace --fieldtype-name --yui-fieldtype-namespace</comment> are needed if you follow the
 conventions):
 
-<info>php app/console generate:fieldtype --namespace=Acme/FooBundle --fieldtype-name=Foo</info>
+<info>php app/console generate:fieldtype --namespace=Acme/FooBundle --fieldtype-name=Foo --yui-fieldtype-namespace=acme</info>
 
 Note that you can use <comment>/</comment> instead of <comment>\\ </comment>for the namespace delimiter to avoid any
 problem.
@@ -44,7 +45,7 @@ problem.
 If you want to disable any user interaction, use <comment>--no-interaction</comment> but don't forget to pass 
 all needed options:
 
-<info>php app/console generate:fieldtype --namespace=Acme/FooBundle --dir=src --fieldtype-name=Foo 
+<info>php app/console generate:fieldtype --namespace=Acme/FooBundle --dir=src --fieldtype-name=Foo --yui-fieldtype-namespace=acme
 [--bundle-name=...] --no-interaction</info>
 
 Note that the bundle namespace must end with "Bundle".
@@ -74,7 +75,7 @@ EOT
             }
         }
 
-        foreach (array('namespace', 'dir', 'fieldtype-name') as $option) {
+        foreach (array('namespace', 'dir', 'fieldtype-name', 'yui-fieldtype-namespace') as $option) {
             if (null === $input->getOption($option)) {
                 throw new \RuntimeException(sprintf('The "%s" option must be provided.', $option));
             }
@@ -88,6 +89,7 @@ EOT
         $bundle = Validators::validateBundleName($bundle);
         $dir = Validators::validateTargetDir($input->getOption('dir'), $bundle, $namespace);
         $fieldTypeName = FieldTypeValidators::validateFieldTypeName($input->getOption('fieldtype-name'));
+        $yuiFieldTypeNamespace = FieldTypeValidators::validateFieldTypeNamespace($input->getOption('yui-fieldtype-namespace'));
 
         $questionHelper->writeSection($output, 'Field Type structure generation');
 
@@ -96,7 +98,7 @@ EOT
         }
 
         $generator = $this->getGenerator();
-        $generator->generate($namespace, $bundle, $dir, $fieldTypeName);
+        $generator->generate($namespace, $bundle, $dir, $fieldTypeName, $yuiFieldTypeNamespace);
 
         $output->writeln('Generating the Field Type structure code: <info>OK</info>');
 
@@ -187,6 +189,7 @@ EOT
 
         $namespace = $this->getNamespace($input, $output, $questionHelper);
         $fieldTypeName = $this->getFieldTypeName($input, $output, $questionHelper);
+        $yuiFieldTypeNamespace = $this->getYuiFieldTypeNamespace($input, $output, $questionHelper);
         $bundle = $this->getBundle($input, $output, $questionHelper, $namespace);
         $dir = $this->getDir($input, $output, $questionHelper, $bundle, $namespace);
 
@@ -290,7 +293,7 @@ EOT
                     $input->getOption('fieldtype-name')
                 );
                 $question->setValidator(function ($answer) {
-                    return FieldTypeValidators::validateFieldTypeName($answer, false);
+                    return FieldTypeValidators::validateFieldTypeName($answer);
 
                 });
                 $fieldTypeName = $questionHelper->ask($input, $output, $question);
@@ -302,6 +305,46 @@ EOT
         }
 
         return $fieldTypeName;
+    }
+
+    private function getYuiFieldTypeNamespace(InputInterface $input, OutputInterface $output, QuestionHelper $questionHelper)
+    {
+        // yui-fieldtype-namespace
+        $yuiFieldTypeNamespace = null;
+        try {
+            // validate the yui-fieldtype-namespace option (if any)
+            $yuiFieldTypeNamespace = $input->getOption('yui-fieldtype-namespace')
+                ? FieldTypeValidators::validateFieldTypeNamespace($input->getOption('yui-fieldtype-namespace'))
+                : null;
+        } catch (\Exception $error) {
+            $output->writeln(
+                $questionHelper->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error')
+            );
+        }
+
+        if (null === $yuiFieldTypeNamespace) {
+            $acceptedYuiFieldTypeNamespace = false;
+            while (!$acceptedYuiFieldTypeNamespace) {
+                $question = new Question(
+                    $questionHelper->getQuestion(
+                        'YUI FieldType namespace',
+                        $input->getOption('yui-fieldtype-namespace')
+                    ),
+                    $input->getOption('yui-fieldtype-namespace')
+                );
+                $question->setValidator(function ($answer) {
+                    return FieldTypeValidators::validateFieldTypeNamespace($answer);
+
+                });
+                $yuiFieldTypeNamespace = $questionHelper->ask($input, $output, $question);
+
+                // mark as accepted, unless they want to try again below
+                $acceptedYuiFieldTypeNamespace = true;
+            }
+            $input->setOption('yui-fieldtype-namespace', $yuiFieldTypeNamespace);
+        }
+
+        return $yuiFieldTypeNamespace;
     }
 
     private function getBundle(

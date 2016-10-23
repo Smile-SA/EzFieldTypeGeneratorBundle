@@ -11,6 +11,6 @@ class {{ fieldtype_basename }}Field extends FieldType
 {% endblock class_definition %}
 {
 {% block class_body %}
-    protected $type = 'ez_{{ fieldtype_identifier }}';
+    protected $type = '{{ yui_fieldtype_namespace_identifier }}_{{ fieldtype_identifier }}';
 {% endblock class_body %}
 }

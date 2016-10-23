@@ -35,7 +35,7 @@ class FormMapper implements FieldDefinitionFormMapperInterface, FieldValueFormMa
                 $fieldDefinitionForm->getConfig()->getFormFactory()->createBuilder()
                     ->create('defaultValue', TextType::class, [
                         'required' => false,
-                        'label' => 'field_definition.ez{{ fieldtype_identifier }}.default_value',
+                        'label' => 'field_definition.{{ yui_fieldtype_namespace_identifier }}{{ fieldtype_identifier }}.default_value',
                     ])
                     ->addModelTransformer(new ValueTransformer())
                     ->setAutoInitialize(false)->getForm()

@@ -1,9 +1,9 @@
 parameters:
-    ezpublish.fieldType.ez{{ fieldtype_identifier }}.converter.class: {{ namespace }}\Persistence\Content\FieldValue\Converter\{{ fieldtype_basename }}Converter
+    ezpublish.fieldType.{{ yui_fieldtype_namespace_identifier }}{{ fieldtype_identifier }}.converter.class: {{ namespace }}\Persistence\Content\FieldValue\Converter\{{ fieldtype_basename }}Converter
 
 services:
-    ezpublish.fieldType.ez{{ fieldtype_identifier }}.converter:
-        class: "%ezpublish.fieldType.ez{{ fieldtype_identifier }}.converter.class%"
+    ezpublish.fieldType.{{ yui_fieldtype_namespace_identifier }}{{ fieldtype_identifier }}.converter:
+        class: "%ezpublish.fieldType.{{ yui_fieldtype_namespace_identifier }}{{ fieldtype_identifier }}.converter.class%"
         tags:
-            - {name: ezpublish.storageEngine.legacy.converter, alias: ez{{ fieldtype_identifier }}, lazy: true, callback: '::create'}
+            - {name: ezpublish.storageEngine.legacy.converter, alias: {{ yui_fieldtype_namespace_identifier }}{{ fieldtype_identifier }}, lazy: true, callback: '::create'}
 

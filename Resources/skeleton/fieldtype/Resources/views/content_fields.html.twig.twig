@@ -1,6 +1,6 @@
 {{ "{% extends 'EzPublishCoreBundle::content_fields.html.twig' %}" }}
 
-{{ "{% block ez" }}{{ fieldtype_identifier }}{{ "_field %}" }}
+{{ "{% block " }}{{ yui_fieldtype_namespace_identifier }}{{ fieldtype_identifier }}{{ "_field %}" }}
     {{ "{% spaceless %}" }}
         {{ "{% set field_value = field.value.text %}" }}
         {{ "{{ block( 'simple_inline_field' ) }}" }}

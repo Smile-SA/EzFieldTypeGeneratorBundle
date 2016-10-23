@@ -45,7 +45,7 @@ class {{ bundle_basename }}Extension extends Extension implements PrependExtensi
     private function prependYui(ContainerBuilder $container)
     {
         $container->setParameter(
-            'ez_{{ fieldtype_identifier }}fieldtype.public_dir',
+            '{{ yui_fieldtype_namespace_identifier }}_{{ fieldtype_identifier }}fieldtype.public_dir',
             'bundles/{{ bundle_basename_lower }}'
         );
         $yuiConfigFile = __DIR__ . '/../Resources/config/yui.yml';
@@ -57,7 +57,7 @@ class {{ bundle_basename }}Extension extends Extension implements PrependExtensi
     private function prependCss(ContainerBuilder $container)
     {
         $container->setParameter(
-            'ez_{{ fieldtype_identifier }}fieldtype.public_dir',
+            '{{ yui_fieldtype_namespace_identifier }}_{{ fieldtype_identifier }}fieldtype.public_dir',
             'bundles/{{ bundle_basename_lower }}'
         );
         $cssConfigFile = __DIR__ . '/../Resources/config/css.yml';

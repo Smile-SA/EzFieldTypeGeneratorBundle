@@ -1,8 +1,8 @@
 parameters:
-    ezpublish.fieldType.indexable.ez{{ fieldtype_identifier }}.class: {{ namespace }}\FieldType\{{ fieldtype_basename }}\SearchField
+    ezpublish.fieldType.indexable.{{ yui_fieldtype_namespace_identifier }}{{ fieldtype_identifier }}.class: {{ namespace }}\FieldType\{{ fieldtype_basename }}\SearchField
 
 services:
-    ezpublish.fieldType.indexable.ez{{ fieldtype_identifier }}:
-        class: "%ezpublish.fieldType.indexable.ez{{ fieldtype_identifier }}.class%"
+    ezpublish.fieldType.indexable.{{ yui_fieldtype_namespace_identifier }}{{ fieldtype_identifier }}:
+        class: "%ezpublish.fieldType.indexable.{{ yui_fieldtype_namespace_identifier }}{{ fieldtype_identifier }}.class%"
         tags:
-            - {name: ezpublish.fieldType.indexable, alias: ez{{ fieldtype_identifier }}}
+            - {name: ezpublish.fieldType.indexable, alias: {{ yui_fieldtype_namespace_identifier }}{{ fieldtype_identifier }}}

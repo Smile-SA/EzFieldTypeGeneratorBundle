@@ -34,7 +34,7 @@ class Type extends FieldType
 
     public function getFieldTypeIdentifier()
     {
-        return 'ez{{ fieldtype_identifier }}';
+        return '{{ yui_fieldtype_namespace_identifier }}{{ fieldtype_identifier }}';
     }
 
     public function getName(SPIValue $value)

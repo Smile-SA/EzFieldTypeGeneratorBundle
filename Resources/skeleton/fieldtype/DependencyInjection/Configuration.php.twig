@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('ez_{{ fieldtype_identifier }}fieldtype');
+        $rootNode = $treeBuilder->root('{{ yui_fieldtype_namespace_identifier }}_{{ fieldtype_identifier }}fieldtype');
 
         return $treeBuilder;
     }

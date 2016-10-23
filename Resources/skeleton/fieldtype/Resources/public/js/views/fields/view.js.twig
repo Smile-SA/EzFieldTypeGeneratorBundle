@@ -1,0 +1,16 @@
+YUI.add('{{ yui_fieldtype_namespace_identifier }}-{{ fieldtype_identifier }}-view', function (Y) {
+    "use strict";
+    Y.namespace('{{ yui_fieldtype_namespace }}');
+
+    Y.{{ yui_fieldtype_namespace }}.{{ fieldtype_basename }}View = Y.Base.create('{{ fieldtype_identifier }}View', Y.eZ.FieldView, [], {
+        _isFieldEmpty: function () {
+            return (this.get('field').fieldValue === null);
+        },
+
+        _getName: function () {
+            return Y.{{ yui_fieldtype_namespace }}.{{ fieldtype_basename }}View.NAME;
+        },
+    });
+
+    Y.eZ.FieldView.registerFieldView('{{ yui_fieldtype_namespace_identifier }}{{ fieldtype_identifier }}', Y.{{ yui_fieldtype_namespace }}.{{ fieldtype_basename }}View);
+});
