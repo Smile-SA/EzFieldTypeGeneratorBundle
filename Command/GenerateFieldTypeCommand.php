@@ -198,7 +198,14 @@ EOT
             '',
             $this->getHelper('formatter')->formatBlock('Summary before generation', 'bg=blue;fg=white', true),
             '',
-            sprintf("You are going to generate a \"<info>%s\\%s</info>\" FieldType bundle\nin \"<info>%s</info> with fieldtype name <info>%s</info>\".", $namespace, $bundle, $dir, $fieldTypeName),
+            sprintf(
+                "You are going to generate a \"<info>%s\\%s</info>\" FieldType bundle\nin \"<info>%s</info>\"\n with fieldtype name \"<info>%s</info>\" and YUI namspace \"<info>%s</info>\".",
+                $namespace,
+                $bundle,
+                $dir,
+                $fieldTypeName,
+                $yuiFieldTypeNamespace
+            ),
             '',
         ));
     }
