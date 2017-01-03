@@ -1,5 +1,6 @@
 {
   "name": "smile/ez-fieldtypegenerator-bundle",
+  "type": "ezplatform-bundle",
   "description": "FieldType generator for eZ Platform 6.x",
   "license": ["MIT"],
   "authors": [
@@ -11,8 +12,8 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": ">=5.3.0",
-    "sensio/generator-bundle": "~2.3"
+    "php": "~5.6|~7.0",
+    "ezsystems/ezplatform": "^1.7"
   },
   "autoload": {
     "psr-0": { "Smile\\EzFieldTypeGeneratorBundle": "" }
