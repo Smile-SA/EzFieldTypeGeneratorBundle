@@ -87,7 +87,7 @@ EOT
             $bundle = strtr($namespace, array('\\' => ''));
         }
         $bundle = Validators::validateBundleName($bundle);
-        $dir = Validators::validateTargetDir($input->getOption('dir'), $bundle, $namespace);
+        $dir = self::validateTargetDir($input->getOption('dir'), $bundle, $namespace);
         $fieldTypeName = FieldTypeValidators::validateFieldTypeName($input->getOption('fieldtype-name'));
         $yuiFieldTypeNamespace = FieldTypeValidators::validateFieldTypeNamespace($input->getOption('yui-fieldtype-namespace'));
 
@@ -405,7 +405,7 @@ EOT
         $dir = null;
         try {
             $dir = $input->getOption('dir')
-                ? Validators::validateTargetDir($input->getOption('dir'), $bundle, $namespace)
+                ? self::validateTargetDir($input->getOption('dir'), $bundle, $namespace)
                 : null;
         } catch (\Exception $error) {
             $output->writeln($questionHelper->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error'));
@@ -422,7 +422,7 @@ EOT
             ));
             $question = new Question($questionHelper->getQuestion('Target directory', $dir), $dir);
             $question->setValidator(function ($dir) use ($bundle, $namespace) {
-                return Validators::validateTargetDir($dir, $bundle, $namespace);
+                return self::validateTargetDir($dir, $bundle, $namespace);
             });
             $dir = $questionHelper->ask($input, $output, $question);
             $input->setOption('dir', $dir);
@@ -439,5 +439,20 @@ EOT
         return new FieldTypeGenerator(
             $this->getContainer()->get('kernel')
         );
+    }
+
+    /**
+     * Validation function taken from <3.0 release of Sensio Generator bundle
+     *
+     * @param string $dir The target directory
+     * @param string $bundle The bundle name
+     * @param string $namespace The namespace
+     *
+     * @return string
+     */
+    public static function validateTargetDir($dir, $bundle, $namespace)
+    {
+        // add trailing / if necessary
+        return '/' === substr($dir, -1, 1) ? $dir : $dir.'/';
     }
 }
