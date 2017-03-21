@@ -1,8 +1,8 @@
 {{ "{% extends 'EzPublishCoreBundle::fielddefinition_settings.html.twig' %}" }}
 
 {{ "{% block " }}{{ yui_fieldtype_namespace_identifier }}{{ fieldtype_identifier }}{{ "_settings %}" }}
-    {{ '<ul class="fielddef-settings {{ fielddefinition.fieldTypeIdentifier }}-settings">' }}
-        {{ "{% set defaultValue = fielddefinition.defaultValue.value %}" }}
+    {{ '<ul class="ez-fielddefinition-settings ez-fielddefinition-{{ fielddefinition.fieldTypeIdentifier }}-settings">' }}
+        {{ "{% set defaultValue = fielddefinition.defaultValue.text %}" }}
         {{ "{{ block('settings_defaultvalue') }}" }}
     </ul>
 {{ "{% endblock %}" }}
